@@ -7,7 +7,8 @@
   <title>가위바위보 — 한 판 하실래요?</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@400;500;600;700;800&display=swap');
-    :root { color-scheme: light; --ink:#24241f; --muted:#87867d; --paper:#f6f1e9; --green:#244b3b; --lime:#d9f377; --line:#e6e0d6; }
+    :root { color-scheme: light; --ink:#24241f; --muted:#87867d; --paper:#f6f1e9; --green:#244b3b; --lime:#d9f377; --line:#e6e0d6; --card:#fffdfa; --arena:#f7f5ef; --arena-line:#f0ece5; --control:#fff; --soft:#f4f0e9; --shadow:0 16px 45px #3e37220a; }
+    :root[data-theme="dark"] { color-scheme: dark; --ink:#f0eee7; --muted:#aaa99f; --paper:#191d1a; --green:#b9d98d; --lime:#243a2e; --line:#343a35; --card:#222824; --arena:#1b211d; --arena-line:#303831; --control:#292f2b; --soft:#303731; --shadow:0 16px 45px #0003; }
     * { box-sizing: border-box; }
     body { margin:0; min-height:100vh; background:var(--paper); color:var(--ink); font-family:'Gowun Dodum', sans-serif; }
     button { font:inherit; }
@@ -15,7 +16,12 @@
     header { height:86px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
     .brand { display:flex; align-items:center; gap:10px; font:700 16px 'Outfit', sans-serif; letter-spacing:-.4px; }
     .brand-mark { display:grid; place-items:center; width:33px; height:33px; border-radius:11px; background:var(--green); color:var(--lime); font-size:19px; }
+    .header-actions { display:flex; align-items:center; gap:17px; }
     .header-note { color:var(--muted); font-size:13px; }
+    .theme-toggle { display:flex; align-items:center; gap:7px; padding:8px 11px; border:1px solid var(--line); border-radius:999px; background:var(--card); color:var(--ink); font-size:12px; cursor:pointer; transition:background .17s, border-color .17s; }
+    .theme-toggle:hover { background:var(--soft); }
+    .theme-toggle:focus-visible { outline:3px solid #a2bd5a; outline-offset:3px; }
+    .theme-icon { font-size:15px; line-height:1; }
     main { padding:64px 0 55px; }
     .intro { text-align:center; }
     .eyebrow { display:inline-flex; align-items:center; gap:7px; color:var(--green); font:600 11px 'Outfit',sans-serif; letter-spacing:1.7px; text-transform:uppercase; }
@@ -23,24 +29,24 @@
     h1 { margin:13px 0 10px; font-size:clamp(36px,6vw,58px); line-height:1.12; letter-spacing:-2.5px; }
     h1 span { color:var(--green); }
     .subtitle { margin:0; color:var(--muted); font-size:15px; }
-    .game-card { width:min(100%, 780px); margin:39px auto 0; padding:34px 45px 32px; background:#fffdfa; border:1px solid #eee9e1; border-radius:25px; box-shadow:0 16px 45px #3e37220a; }
+    .game-card { width:min(100%, 780px); margin:39px auto 0; padding:34px 45px 32px; background:var(--card); border:1px solid var(--line); border-radius:25px; box-shadow:var(--shadow); }
     .scoreboard { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; max-width:400px; margin:0 auto 25px; }
     .score { text-align:center; }
     .score-label { display:block; color:var(--muted); font-size:12px; }
     .score-num { display:block; margin-top:1px; font:700 36px 'Outfit',sans-serif; letter-spacing:-1px; }
     .score-num.player { color:var(--green); }
     .score-sep { color:#c9c4bb; font:500 13px 'Outfit',sans-serif; }
-    .arena { display:grid; grid-template-columns:1fr 76px 1fr; align-items:center; gap:15px; padding:27px 30px; background:#f7f5ef; border:1px solid #f0ece5; border-radius:19px; }
+    .arena { display:grid; grid-template-columns:1fr 76px 1fr; align-items:center; gap:15px; padding:27px 30px; background:var(--arena); border:1px solid var(--arena-line); border-radius:19px; }
     .fighter { text-align:center; }
     .fighter-label { display:block; color:var(--muted); font-size:12px; }
     .hand { display:grid; place-items:center; height:108px; font-size:70px; line-height:1; filter:drop-shadow(0 5px 2px #24241f0c); }
     .hand.playing { animation: bob .35s ease-in-out infinite alternate; }
     @keyframes bob { to { transform:translateY(-7px) rotate(-7deg); } }
-    .versus { display:grid; place-items:center; width:40px; height:40px; margin:auto; border-radius:50%; background:#fffdfa; color:#aaa69d; font:700 11px 'Outfit',sans-serif; }
+    .versus { display:grid; place-items:center; width:40px; height:40px; margin:auto; border-radius:50%; background:var(--card); color:var(--muted); font:700 11px 'Outfit',sans-serif; }
     .result { min-height:28px; margin:23px 0 19px; text-align:center; font-size:19px; font-weight:700; }
     .result small { display:block; margin-top:3px; color:var(--muted); font-size:12px; font-weight:400; }
     .choices { display:flex; justify-content:center; gap:13px; }
-    .choice { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:100px; height:94px; border:1px solid var(--line); border-radius:17px; background:#fff; color:var(--ink); cursor:pointer; transition:transform .17s, border-color .17s, background .17s, box-shadow .17s; }
+    .choice { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:100px; height:94px; border:1px solid var(--line); border-radius:17px; background:var(--control); color:var(--ink); cursor:pointer; transition:transform .17s, border-color .17s, background .17s, box-shadow .17s; }
     .choice:hover { transform:translateY(-4px); border-color:#a8b58f; box-shadow:0 7px 16px #244b3b12; }
     .choice:active { transform:translateY(-1px); }
     .choice:focus-visible, .reset:focus-visible { outline:3px solid #a2bd5a; outline-offset:3px; }
@@ -49,12 +55,12 @@
     .choice-name { font-size:13px; font-weight:700; }
     .bottom-row { display:flex; justify-content:center; margin-top:20px; }
     .reset { padding:8px 12px; border:0; border-radius:8px; background:transparent; color:var(--muted); font-size:12px; cursor:pointer; }
-    .reset:hover { background:#f4f0e9; color:var(--ink); }
+    .reset:hover { background:var(--soft); color:var(--ink); }
     .hint { margin:19px 0 0; text-align:center; color:#a09c93; font-size:11px; }
     footer { padding:18px 0 27px; border-top:1px solid var(--line); text-align:center; color:#a09c93; font:11px 'Outfit',sans-serif; letter-spacing:.2px; }
     @media (max-width:600px) {
       .page { width:min(100% - 28px, 1120px); }
-      header { height:68px; }.header-note { font-size:11px; }
+      header { height:68px; }.header-note { display:none; }.header-actions { gap:0; }.theme-toggle { padding:7px 9px; }
       main { padding:47px 0 40px; } h1 { letter-spacing:-1.7px; }.subtitle { font-size:13px; }
       .game-card { margin-top:29px; padding:25px 16px 22px; border-radius:20px; }
       .arena { grid-template-columns:1fr 45px 1fr; gap:4px; padding:20px 8px; }
@@ -68,7 +74,10 @@
   <div class="page">
     <header>
       <div class="brand"><span class="brand-mark">✳</span> LITTLE GAMES</div>
-      <div class="header-note">잠깐의 행운을 시험해 보세요</div>
+      <div class="header-actions">
+        <div class="header-note">잠깐의 행운을 시험해 보세요</div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-icon" aria-hidden="true">🌙</span><span class="theme-label">다크 모드</span></button>
+      </div>
     </header>
     <main>
       <section class="intro" aria-labelledby="title">
@@ -110,6 +119,29 @@
       const result = document.querySelector('#result');
       const buttons = [...document.querySelectorAll('.choice')];
       const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      const themeToggle = document.querySelector('#theme-toggle');
+      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const themeLabel = themeToggle.querySelector('.theme-label');
+
+      function setTheme(theme) {
+        const isDark = theme === 'dark';
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        themeToggle.setAttribute('aria-label', isDark ? '화이트 모드로 전환' : '다크 모드로 전환');
+        themeIcon.textContent = isDark ? '☀️' : '🌙';
+        themeLabel.textContent = isDark ? '화이트 모드' : '다크 모드';
+        document.querySelector('meta[name="theme-color"]').content = isDark ? '#191d1a' : '#f6f1e9';
+      }
+
+      try {
+        const savedTheme = localStorage.getItem('rps-theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') setTheme(savedTheme);
+      } catch (_) { /* 저장소를 사용할 수 없는 경우에는 기본 라이트 모드로 시작합니다. */ }
+      themeToggle.addEventListener('click', () => {
+        const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        setTheme(nextTheme);
+        try { localStorage.setItem('rps-theme', nextTheme); } catch (_) { /* 현재 화면에는 즉시 적용됩니다. */ }
+      });
 
       async function play(player) {
         if (busy) return;
