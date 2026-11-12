@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f1e9">
+  <title>가위바위보 — 한 판 하실래요?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@400;500;600;700;800&display=swap');
+    :root { color-scheme: light; --ink:#24241f; --muted:#87867d; --paper:#f6f1e9; --green:#244b3b; --lime:#d9f377; --line:#e6e0d6; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; background:var(--paper); color:var(--ink); font-family:'Gowun Dodum', sans-serif; }
+    button { font:inherit; }
+    .page { width:min(100% - 40px, 1120px); margin:auto; }
+    header { height:86px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:10px; font:700 16px 'Outfit', sans-serif; letter-spacing:-.4px; }
+    .brand-mark { display:grid; place-items:center; width:33px; height:33px; border-radius:11px; background:var(--green); color:var(--lime); font-size:19px; }
+    .header-note { color:var(--muted); font-size:13px; }
+    main { padding:64px 0 55px; }
+    .intro { text-align:center; }
+    .eyebrow { display:inline-flex; align-items:center; gap:7px; color:var(--green); font:600 11px 'Outfit',sans-serif; letter-spacing:1.7px; text-transform:uppercase; }
+    .eyebrow:before { content:''; width:6px; height:6px; background:#83a453; border-radius:50%; }
+    h1 { margin:13px 0 10px; font-size:clamp(36px,6vw,58px); line-height:1.12; letter-spacing:-2.5px; }
+    h1 span { color:var(--green); }
+    .subtitle { margin:0; color:var(--muted); font-size:15px; }
+    .game-card { width:min(100%, 780px); margin:39px auto 0; padding:34px 45px 32px; background:#fffdfa; border:1px solid #eee9e1; border-radius:25px; box-shadow:0 16px 45px #3e37220a; }
+    .scoreboard { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; max-width:400px; margin:0 auto 25px; }
+    .score { text-align:center; }
+    .score-label { display:block; color:var(--muted); font-size:12px; }
+    .score-num { display:block; margin-top:1px; font:700 36px 'Outfit',sans-serif; letter-spacing:-1px; }
+    .score-num.player { color:var(--green); }
+    .score-sep { color:#c9c4bb; font:500 13px 'Outfit',sans-serif; }
+    .arena { display:grid; grid-template-columns:1fr 76px 1fr; align-items:center; gap:15px; padding:27px 30px; background:#f7f5ef; border:1px solid #f0ece5; border-radius:19px; }
+    .fighter { text-align:center; }
+    .fighter-label { display:block; color:var(--muted); font-size:12px; }
+    .hand { display:grid; place-items:center; height:108px; font-size:70px; line-height:1; filter:drop-shadow(0 5px 2px #24241f0c); }
+    .hand.playing { animation: bob .35s ease-in-out infinite alternate; }
+    @keyframes bob { to { transform:translateY(-7px) rotate(-7deg); } }
+    .versus { display:grid; place-items:center; width:40px; height:40px; margin:auto; border-radius:50%; background:#fffdfa; color:#aaa69d; font:700 11px 'Outfit',sans-serif; }
+    .result { min-height:28px; margin:23px 0 19px; text-align:center; font-size:19px; font-weight:700; }
+    .result small { display:block; margin-top:3px; color:var(--muted); font-size:12px; font-weight:400; }
+    .choices { display:flex; justify-content:center; gap:13px; }
+    .choice { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:100px; height:94px; border:1px solid var(--line); border-radius:17px; background:#fff; color:var(--ink); cursor:pointer; transition:transform .17s, border-color .17s, background .17s, box-shadow .17s; }
+    .choice:hover { transform:translateY(-4px); border-color:#a8b58f; box-shadow:0 7px 16px #244b3b12; }
+    .choice:active { transform:translateY(-1px); }
+    .choice:focus-visible, .reset:focus-visible { outline:3px solid #a2bd5a; outline-offset:3px; }
+    .choice:disabled { cursor:wait; opacity:.7; }
+    .choice-emoji { font-size:31px; line-height:1.1; }
+    .choice-name { font-size:13px; font-weight:700; }
+    .bottom-row { display:flex; justify-content:center; margin-top:20px; }
+    .reset { padding:8px 12px; border:0; border-radius:8px; background:transparent; color:var(--muted); font-size:12px; cursor:pointer; }
+    .reset:hover { background:#f4f0e9; color:var(--ink); }
+    .hint { margin:19px 0 0; text-align:center; color:#a09c93; font-size:11px; }
+    footer { padding:18px 0 27px; border-top:1px solid var(--line); text-align:center; color:#a09c93; font:11px 'Outfit',sans-serif; letter-spacing:.2px; }
+    @media (max-width:600px) {
+      .page { width:min(100% - 28px, 1120px); }
+      header { height:68px; }.header-note { font-size:11px; }
+      main { padding:47px 0 40px; } h1 { letter-spacing:-1.7px; }.subtitle { font-size:13px; }
+      .game-card { margin-top:29px; padding:25px 16px 22px; border-radius:20px; }
+      .arena { grid-template-columns:1fr 45px 1fr; gap:4px; padding:20px 8px; }
+      .hand { height:91px; font-size:61px; }.versus { width:34px; height:34px; }
+      .choice { width:88px; height:84px; border-radius:14px; }.choices { gap:9px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand"><span class="brand-mark">✳</span> LITTLE GAMES</div>
+      <div class="header-note">잠깐의 행운을 시험해 보세요</div>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="title">
+        <div class="eyebrow">A LITTLE GAME</div>
+        <h1 id="title">가위, 바위, <span>보!</span></h1>
+        <p class="subtitle">마음 가는 걸 골라보세요. 오늘의 승자는 누구?</p>
+      </section>
+      <section class="game-card" aria-label="가위바위보 게임">
+        <div class="scoreboard" aria-label="현재 점수">
+          <div class="score"><span class="score-label">나</span><span class="score-num player" id="player-score">0</span></div>
+          <span class="score-sep">SCORE</span>
+          <div class="score"><span class="score-label">컴퓨터</span><span class="score-num" id="computer-score">0</span></div>
+        </div>
+        <div class="arena" aria-live="polite">
+          <div class="fighter"><span class="fighter-label">나</span><div class="hand" id="player-hand">✊</div></div>
+          <div class="versus">VS</div>
+          <div class="fighter"><span class="fighter-label">컴퓨터</span><div class="hand" id="computer-hand">✊</div></div>
+        </div>
+        <div class="result" id="result" aria-live="assertive">무엇을 낼까요?<small>아래 버튼을 눌러 한 판 시작해요</small></div>
+        <div class="choices" role="group" aria-label="내가 낼 손 선택">
+          <button class="choice" data-choice="scissors"><span class="choice-emoji">✌️</span><span class="choice-name">가위</span></button>
+          <button class="choice" data-choice="rock"><span class="choice-emoji">✊</span><span class="choice-name">바위</span></button>
+          <button class="choice" data-choice="paper"><span class="choice-emoji">✋</span><span class="choice-name">보</span></button>
+        </div>
+        <div class="bottom-row"><button class="reset" id="reset">↻　점수 초기화</button></div>
+        <p class="hint">먼저 1점을 얻어보세요. 비기면 점수는 그대로예요.</p>
+      </section>
+    </main>
+    <footer>MADE FOR A LITTLE MOMENT OF FUN</footer>
+  </div>
+  <script>
+    (() => {
+      const hands = { rock: '✊', paper: '✋', scissors: '✌️' };
+      const names = { rock: '바위', paper: '보', scissors: '가위' };
+      const beats = { rock: 'scissors', paper: 'rock', scissors: 'paper' };
+      let playerScore = 0, computerScore = 0, busy = false;
+      const playerHand = document.querySelector('#player-hand');
+      const computerHand = document.querySelector('#computer-hand');
+      const result = document.querySelector('#result');
+      const buttons = [...document.querySelectorAll('.choice')];
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+      async function play(player) {
+        if (busy) return;
+        busy = true;
+        buttons.forEach(button => button.disabled = true);
+        playerHand.classList.add('playing'); computerHand.classList.add('playing');
+        result.textContent = '가위… 바위… 보!';
+        for (let i = 0; i < 7; i++) {
+          computerHand.textContent = Object.values(hands)[i % 3];
+          await pause(85);
+        }
+        const computer = Object.keys(hands)[Math.floor(Math.random() * 3)];
+        playerHand.textContent = hands[player]; computerHand.textContent = hands[computer];
+        playerHand.classList.remove('playing'); computerHand.classList.remove('playing');
+        let message;
+        if (player === computer) message = '비겼어요!';
+        else if (beats[player] === computer) { message = '이겼어요! 🎉'; playerScore++; }
+        else { message = '아쉬워요, 졌어요'; computerScore++; }
+        document.querySelector('#player-score').textContent = playerScore;
+        document.querySelector('#computer-score').textContent = computerScore;
+        result.innerHTML = `${message}<small>나 ${names[player]} · 컴퓨터 ${names[computer]}</small>`;
+        buttons.forEach(button => button.disabled = false);
+        busy = false;
+      }
+
+      buttons.forEach(button => button.addEventListener('click', () => play(button.dataset.choice)));
+      document.querySelector('#reset').addEventListener('click', () => {
+        if (busy) return;
+        playerScore = 0; computerScore = 0;
+        document.querySelector('#player-score').textContent = '0';
+        document.querySelector('#computer-score').textContent = '0';
+        playerHand.textContent = '✊'; computerHand.textContent = '✊';
+        result.innerHTML = '무엇을 낼까요?<small>아래 버튼을 눌러 한 판 시작해요</small>';
+      });
+    })();
+  </script>
+</body>
+</html>
